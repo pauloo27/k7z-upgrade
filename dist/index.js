@@ -2867,7 +2867,7 @@ try {
   const projectName = core.getInput('project_name')
   const apiKey = core.getInput('api_key')
   const baseURL = core.getInput('base_url')
-  const apiKeyHeader = 'X-Api-Key'
+  const apiKeyHeader = 'X-API-Key'
 
   const url = new URL(
     `${baseURL}/teams/${teamName}/projects/${projectName}/upgrade`
