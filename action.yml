@@ -1,18 +1,25 @@
-name: 'The name of your action here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'K7z Upgrade'
+description: 'Upgrade helm installs under K7z'
+author: 'manicomio.dev'
 
-# Define your inputs here.
 inputs:
-  milliseconds:
-    description: 'Your input description here'
+  base_url:
+    description:
+      'the base url of the k7z instance, with https and no trailing slash'
     required: true
-    default: '1000'
+  team_name:
+    description: 'the name of the team'
+    required: true
+  project_name:
+    description: 'the name of the project'
+    required: true
+  api_secret:
+    description: 'the api secret'
+    required: true
 
-# Define your outputs here.
 outputs:
-  time:
-    description: 'Your output description here'
+  status:
+    description: 'the http status code of the rollout'
 
 runs:
   using: node20

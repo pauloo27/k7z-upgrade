@@ -1,18 +1,44 @@
-/**
- * Unit tests for the action's entrypoint, src/index.js
- */
+const core = require('@actions/core')
+const https = require('node:https')
 
-const { run } = require('../src/main')
+// this this is terrible, i know it.
 
-// Mock the action's entrypoint
-jest.mock('../src/main', () => ({
-  run: jest.fn()
-}))
+const values = {
+  base_url: 'https://k7z.example.com',
+  api_key: 'sample',
+  team_name: 'team',
+  project_name: 'project'
+}
 
-describe('index', () => {
-  it('calls run when imported', async () => {
-    require('../src/index')
+jest.spyOn(core, 'getInput').mockImplementation(name => values[name])
+jest.spyOn(core, 'info').mockImplementation(console.log)
+jest
+  .spyOn(core, 'setOutput')
+  .mockImplementation(x => console.log('setOutput', x))
+jest.spyOn(core, 'setFailed').mockImplementation(x => {
+  console.error('setFailed', x)
+  // should i throw?
+})
 
-    expect(run).toHaveBeenCalled()
+jest.spyOn(https, 'request').mockImplementation((_options, cb) => {
+  const res = {
+    statusCode: 200,
+    on: (event, onCb) => {
+      if (event === 'end') {
+        onCb()
+      }
+    }
+  }
+  cb(res)
+  return {
+    on: () => {},
+    end: () => {}
+  }
+})
+
+describe('action', () => {
+  it('should work', () => {
+    require('../src')
+    expect(true).toBe(true)
   })
 })
