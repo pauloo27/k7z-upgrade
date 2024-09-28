@@ -1,44 +1,39 @@
 const core = require('@actions/core')
-const https = require('node:https')
 
-try {
-  const teamName = core.getInput('team_name')
-  const projectName = core.getInput('project_name')
-  const apiKey = core.getInput('api_key')
-  const baseURL = core.getInput('base_url')
-  const apiKeyHeader = 'X-API-Key'
+async function main() {
+  try {
+    const teamName = core.getInput('team_name')
+    const projectName = core.getInput('project_name')
+    const apiKey = core.getInput('api_key')
+    const baseURL = core.getInput('base_url')
+    const ref = core.getInput('ref')
 
-  const url = new URL(
-    `${baseURL}/teams/${teamName}/projects/${projectName}/upgrade`
-  )
+    const apiKeyHeader = 'X-API-Key'
 
-  core.info(`Upgrading install ${teamName}/${projectName} at ${url}`)
+    const url = new URL(
+      `${baseURL}/teams/${encodeURIComponent(teamName)}/projects/${encodeURIComponent(projectName)}/upgrade`
+    )
 
-  const req = https.request(
-    {
+    core.info(`Upgrading install ${teamName}/${projectName} at ${url}`)
+
+    const res = await fetch(url, {
       method: 'POST',
-      hostname: url.hostname,
-      path: url.pathname,
       headers: {
         [apiKeyHeader]: apiKey
-      }
-    },
+      },
+      body: JSON.stringify({ ref })
+    })
 
-    res => {
-      const statusCode = res.statusCode
-      if (statusCode === 200) {
-        core.setOutput('status', statusCode)
-      } else {
-        core.setFailed(`Request failed with status code ${statusCode}`)
-      }
+    if (!res.ok) {
+      throw new Error(`Failed to upgrade install: ${res.statusText}`)
     }
-  )
 
-  req.on('error', error => {
+    core.info(`Install ${teamName}/${projectName} upgrad started`)
+
+    core.setOutput('status', res.status)
+  } catch (error) {
     core.setFailed(error.message)
-  })
-
-  req.end()
-} catch (error) {
-  core.setFailed(error.message)
+  }
 }
+
+main()

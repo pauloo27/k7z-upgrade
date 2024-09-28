@@ -2778,14 +2778,6 @@ module.exports = require("net");
 
 /***/ }),
 
-/***/ 286:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("node:https");
-
-/***/ }),
-
 /***/ 37:
 /***/ ((module) => {
 
@@ -2860,49 +2852,44 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
 const core = __nccwpck_require__(186)
-const https = __nccwpck_require__(286)
 
-try {
-  const teamName = core.getInput('team_name')
-  const projectName = core.getInput('project_name')
-  const apiKey = core.getInput('api_key')
-  const baseURL = core.getInput('base_url')
-  const apiKeyHeader = 'X-API-Key'
+async function main() {
+  try {
+    const teamName = core.getInput('team_name')
+    const projectName = core.getInput('project_name')
+    const apiKey = core.getInput('api_key')
+    const baseURL = core.getInput('base_url')
+    const ref = core.getInput('ref')
 
-  const url = new URL(
-    `${baseURL}/teams/${teamName}/projects/${projectName}/upgrade`
-  )
+    const apiKeyHeader = 'X-API-Key'
 
-  core.info(`Upgrading install ${teamName}/${projectName} at ${url}`)
+    const url = new URL(
+      `${baseURL}/teams/${encodeURIComponent(teamName)}/projects/${encodeURIComponent(projectName)}/upgrade`
+    )
 
-  const req = https.request(
-    {
+    core.info(`Upgrading install ${teamName}/${projectName} at ${url}`)
+
+    const res = await fetch(url, {
       method: 'POST',
-      hostname: url.hostname,
-      path: url.pathname,
       headers: {
         [apiKeyHeader]: apiKey
-      }
-    },
+      },
+      body: JSON.stringify({ ref })
+    })
 
-    res => {
-      const statusCode = res.statusCode
-      if (statusCode === 200) {
-        core.setOutput('status', statusCode)
-      } else {
-        core.setFailed(`Request failed with status code ${statusCode}`)
-      }
+    if (!res.ok) {
+      throw new Error(`Failed to upgrade install: ${res.statusText}`)
     }
-  )
 
-  req.on('error', error => {
+    core.info(`Install ${teamName}/${projectName} upgrad started`)
+
+    core.setOutput('status', res.status)
+  } catch (error) {
     core.setFailed(error.message)
-  })
-
-  req.end()
-} catch (error) {
-  core.setFailed(error.message)
+  }
 }
+
+main()
 
 })();
 

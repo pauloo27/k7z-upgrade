@@ -13,8 +13,11 @@ inputs:
   project_name:
     description: 'the name of the project'
     required: true
-  api_secret:
+  api_key:
     description: 'the api secret'
+    required: true
+  ref:
+    description: 'branch name or commit id'
     required: true
 
 outputs:
