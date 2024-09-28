@@ -2867,7 +2867,9 @@ async function main() {
       `${baseURL}/teams/${encodeURIComponent(teamName)}/projects/${encodeURIComponent(projectName)}/upgrade`
     )
 
-    core.info(`Upgrading install ${teamName}/${projectName} at ${url}`)
+    core.info(
+      `Upgrading install ${teamName}/${projectName} at ${url} for ${ref}`
+    )
 
     const res = await fetch(url, {
       method: 'POST',
