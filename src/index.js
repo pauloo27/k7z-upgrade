@@ -21,7 +21,8 @@ async function main() {
     const res = await fetch(url, {
       method: 'POST',
       headers: {
-        [apiKeyHeader]: apiKey
+        [apiKeyHeader]: apiKey,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({ ref })
     })
