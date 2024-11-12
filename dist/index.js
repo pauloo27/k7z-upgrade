@@ -2884,7 +2884,7 @@ async function main() {
       throw new Error(`Failed to upgrade install: ${res.statusText}`)
     }
 
-    core.info(`Install ${teamName}/${projectName} upgrad started`)
+    core.info(`Install ${teamName}/${projectName} upgrade started`)
 
     core.setOutput('status', res.status)
   } catch (error) {
