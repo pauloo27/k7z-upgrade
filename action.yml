@@ -19,10 +19,13 @@ inputs:
   ref:
     description: 'branch name or commit id'
     required: true
+  data:
+    description: 'extra data to pass'
+    required: false
 
 outputs:
   status:
-    description: 'the http status code of the rollout'
+    description: 'the http status code of the upgrade'
 
 runs:
   using: node20

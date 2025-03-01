@@ -2722,6 +2722,61 @@ exports["default"] = _default;
 
 /***/ }),
 
+/***/ 351:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const core = __nccwpck_require__(186)
+
+async function main() {
+  try {
+    const teamName = core.getInput('team_name')
+    const projectName = core.getInput('project_name')
+    const apiKey = core.getInput('api_key')
+    const baseURL = core.getInput('base_url')
+    const ref = core.getInput('ref')
+    const dataStr = core.getInput('data')
+    const data = dataStr ? JSON.parse(dataStr) : undefined
+
+    const apiKeyHeader = 'X-API-Key'
+
+    const url = new URL(
+      `${baseURL}/teams/${encodeURIComponent(teamName)}/projects/${encodeURIComponent(projectName)}/upgrade`
+    )
+
+    core.info(
+      `Upgrading install ${teamName}/${projectName} at ${url} for ${ref} with ${dataStr}`
+    )
+
+    const res = await fetch(url.toString(), {
+      method: 'POST',
+      headers: {
+        [apiKeyHeader]: apiKey,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ ref, data })
+    })
+
+    if (!res.ok) {
+      throw new Error(`Failed to upgrade install: ${res.statusText}`)
+    }
+
+    core.info(`Install ${teamName}/${projectName} upgrade started`)
+
+    core.setOutput('status', res.status)
+  } catch (error) {
+    core.setFailed(error.message)
+  }
+}
+
+if (require.main === require.cache[eval('__filename')]) {
+  main()
+}
+
+module.exports = { main }
+
+
+/***/ }),
+
 /***/ 491:
 /***/ ((module) => {
 
@@ -2848,55 +2903,13 @@ module.exports = require("util");
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
-var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
-(() => {
-const core = __nccwpck_require__(186)
-
-async function main() {
-  try {
-    const teamName = core.getInput('team_name')
-    const projectName = core.getInput('project_name')
-    const apiKey = core.getInput('api_key')
-    const baseURL = core.getInput('base_url')
-    const ref = core.getInput('ref')
-
-    const apiKeyHeader = 'X-API-Key'
-
-    const url = new URL(
-      `${baseURL}/teams/${encodeURIComponent(teamName)}/projects/${encodeURIComponent(projectName)}/upgrade`
-    )
-
-    core.info(
-      `Upgrading install ${teamName}/${projectName} at ${url} for ${ref}`
-    )
-
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        [apiKeyHeader]: apiKey,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ ref })
-    })
-
-    if (!res.ok) {
-      throw new Error(`Failed to upgrade install: ${res.statusText}`)
-    }
-
-    core.info(`Install ${teamName}/${projectName} upgrade started`)
-
-    core.setOutput('status', res.status)
-  } catch (error) {
-    core.setFailed(error.message)
-  }
-}
-
-main()
-
-})();
-
-module.exports = __webpack_exports__;
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __nccwpck_require__(351);
+/******/ 	module.exports = __webpack_exports__;
+/******/ 	
 /******/ })()
 ;
 //# sourceMappingURL=index.js.map
